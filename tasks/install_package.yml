@@ -1,14 +1,13 @@
 ---
-- name: Check if formula exists
-  stat:
-    path: "/usr/local/Homebrew/Library/Taps/{{ homebrew_tap_user }}/homebrew-local-{{ item.name }}/Formula/{{ item.name }}@{{ item.version }}.rb"
-  register: formula
-
 - name: Create brew tap
-  homebrew_tap:
-    name: "{{ homebrew_tap_user }}/local-{{ item.name }}"
-    state: present
-  when: not formula.stat.exists
+  command: "/usr/local/bin/brew tap-new {{ homebrew_tap_user }}/local-{{ item.name }}"
+  args:
+    creates: "/usr/local/Homebrew/Library/Taps/build/homebrew-local-{{ item.name }}/README.md"
+
+- name: Brew extract
+  command: "brew extract --version={{ item.version }} {{ item.name }} {{ homebrew_tap_user }}/local-{{ item.name }}"
+  args:
+    creates: "/usr/local/Homebrew/Library/Taps/{{ homebrew_tap_user }}/homebrew-local-{{ item.name }}/Formula/{{ item.name }}@{{ item.version }}.rb"
 
 - name: Install package
   homebrew:
