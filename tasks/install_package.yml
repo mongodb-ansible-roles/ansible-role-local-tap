@@ -1,0 +1,16 @@
+---
+- name: Check if formula exists
+  stat:
+    path: "/usr/local/Homebrew/Library/Taps/{{ homebrew_tap_user }}/homebrew-local-{{ item.name }}/Formula/{{ item.name }}@{{ item.version }}.rb"
+  register: formula
+
+- name: Create brew tap
+  homebrew_tap:
+    name: "{{ homebrew_tap_user }}/local-{{ item.name }}"
+    state: present
+  when: not formula.stat.exists
+
+- name: Install package
+  homebrew:
+    name: "{{ item.name }}@{{ item.version }}"
+    state: present

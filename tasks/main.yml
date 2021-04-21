@@ -1,0 +1,4 @@
+---
+- name: Loop through packages
+  include_tasks: install_package.yml
+  with_items: "{{ homebrew_tap_packages }}"
